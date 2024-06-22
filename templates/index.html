@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="../Static/style.css"> -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+
+      .section {
+        height: 1000px;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center;  */
+        align-items: center;
+      }
+
+      .text-heading {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .text-heading p {
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .cont-candle img {
+        width: 35vw;
+        height: 320px;
+        cursor: pointer;
+      }
+
+      .form {
+        width: 35vw;
+      }
+
+      form div {
+        margin: 2.5vh 0;
+      }
+      .username,
+      .Quantity,
+      .Address,
+      .phone-number {
+        background-color: rgb(214, 214, 214);
+        border: 2px solid rgb(214, 214, 214);
+        font-size: 20px;
+        padding: 1vh;
+      }
+
+      .username-input {
+        margin-left: -5px;
+        font-size: 20px;
+        padding: 1vh;
+        width: 27.6vw;
+      }
+
+      .Quantity-input {
+        margin-left: -5px;
+        font-size: 20px;
+        padding: 1vh;
+        width: 28.7vw;
+      }
+
+      .Address-input {
+        margin-left: -5px;
+        font-size: 20px;
+        padding: 1vh;
+        width: 29.1vw;
+      }
+
+      .phone-number-input {
+        margin-left: -5px;
+        font-size: 20px;
+        padding: 1vh;
+        width: 25vw;
+      }
+
+      .btn {
+        display: flex;
+        justify-content: center;
+      }
+
+      .btn-submit {
+        font-size: 3vh;
+        padding: 1vh;
+        width: 7vw;
+        border-radius: 10px;
+        color: white;
+        background-color: rgb(121, 152, 251);
+        cursor: pointer;
+      }
+
+      .btn-submit:hover {
+        background-color: rgb(89, 127, 253);
+      }
+
+      table {
+        width: 35vw;
+      }
+
+      .table thead {
+        width: 100%;
+      }
+
+      .table th,
+      td {
+        padding: 2vh;
+        text-align: center;
+      }
+    </style>
+
+    <title>Order Candles</title>
+  </head>
+  <body>
+    <div class="section">
+      <div class="cont-candle">
+        <img
+          src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="candle_img"
+        />
+        <div class="text-heading">
+          <h1>Magic Candles</h1>
+          <p>Price: $3 each</p>
+        </div>
+        <p>These candles actually have special power!</p>
+      </div>
+      <div class="form">
+        <form action="#">
+          <div>
+            <label for="username" class="username">Username</label>
+            <input
+              type="text"
+              class="username-input"
+              id="username"
+              placeholder="Username"
+            />
+          </div>
+          <div>
+            <label for="Quantity" class="Quantity">Quantity</label>
+            <input
+              type="number"
+              class="Quantity-input"
+              id="Quantity"
+              placeholder="Quantity"
+            />
+          </div>
+          <div>
+            <label for="Address" class="Address">Address</label>
+            <input
+              type="text"
+              class="Address-input"
+              id="Address"
+              placeholder="Address"
+            />
+          </div>
+          <div>
+            <label for="phone-number" class="phone-number">Phone Number</label>
+            <input
+              type="number"
+              class="phone-number-input"
+              id="phone-number"
+              placeholder="Phone-number"
+            />
+          </div>
+
+          <div class="btn">
+            <button onclick="posting()" type="submit" class="btn-submit">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+      <br />
+      <br />
+      <br />
+      <h2>Order History</h2>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Quantity</th>
+              <th>Address</th>
+              <th>Phone-number</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        listing();
+      });
+
+      function listing() {
+        $.ajax({
+          type: "GET",
+          url: "/candle-store",
+          data: "",
+          success: function (response) {
+            console.log(response);
+            const candlelist = response["candlelist"];
+            for (let i = 0; i < candlelist.length; i++) {
+              const table_row = candlelist[i];
+              // console.log(table_row);
+              const user_name = table_row["username"];
+              const user_Quantity = table_row["Quantity"];
+              const user_Address = table_row["Address"];
+              const user_Phone_Number = table_row["Phone_Number"];
+
+              const temp_html = `
+                    <tr>
+                        <td>${user_name}</td>
+                        <td>${user_Quantity}</td>
+                        <td>${user_Address}</td>
+                        <td>${user_Phone_Number}</td>
+                    </tr>
+                    `;
+              $("#tbody").append(temp_html);
+            }
+          },
+        });
+      }
+
+      function posting() {
+        const username = $("#username").val();
+        const Quantity = $("#Quantity").val();
+        const Address = $("#Address").val();
+        const Phone_Number = $("#phone-number").val();
+
+        // console.log(username,Quantity,Address,Phone_Number);
+
+        $.ajax({
+          type: "POST",
+          url: "/candle-store",
+          data: {
+            username: username,
+            Quantity: Quantity,
+            Address: Address,
+            Phone_Number: Phone_Number,
+          },
+          success: function (response) {
+            alert("DOne");
+            window.location.reload();
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
